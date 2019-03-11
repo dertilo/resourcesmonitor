@@ -107,12 +107,14 @@ class MonitorSysParams(object):
             gpu_params_names = [c for c in columns if 'utilization' in c]
             gpu_params = [[float(l[columns.index(p)].replace(' ','').replace('%','')) for l in lines]
                           for p in gpu_params_names]
-            plot_save(t,gpu_params,self.log_path+'/gpu_util.png',gpu_params_names)
+            if len(gpu_params)>0:
+                plot_save(t,gpu_params,self.log_path+'/gpu_util.png',gpu_params_names)
 
             gpu_params_names = [c for c in columns if 'MiB' in c]
             gpu_params = [[float(l[columns.index(p)].replace(' ','').replace('%','').replace('MiB','')) for l in lines]
                           for p in gpu_params_names]
-            plot_save(t,gpu_params,self.log_path+'/gpu_mem.png',gpu_params_names)
+            if len(gpu_params)>0:
+                plot_save(t,gpu_params,self.log_path+'/gpu_mem.png',gpu_params_names)
 
     def parse_time(self, l):
         try:
