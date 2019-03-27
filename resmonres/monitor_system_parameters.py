@@ -62,7 +62,7 @@ class MonitorSysParams(object):
 
     def __init__(self,log_path='/tmp'):
         self.log_path = log_path
-        self.log_file = log_path+'/log.csv'
+        self.log_file = log_path+'/cpu-mem-log.csv'
         self.gpu_log_file = log_path+'/gpu-log.csv'
 
     p_gpu:subprocess.Popen=None
