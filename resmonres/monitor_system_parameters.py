@@ -46,14 +46,19 @@ def run_monitoring_fun(log_file='/tmp/log.csv',delay = 1):
     except KeyboardInterrupt:
         sm.close()
 
-def plot_save(t,xx,file,sig_names=None):
-    f = plt.figure()
+def plot_save(t,xx,file,title,sig_names=None):
+    f = plt.figure(figsize=(16, 8), dpi=90)
+    f.add_axes() # WTF !?
+    axes = f.subplots()
+    f.suptitle(title)
+
     if isinstance(xx[0],list):
         [plt.plot(t, x) for x in xx]
         plt.legend(sig_names)
     else:
         plt.plot(t, xx)
-
+    axes.set_xlabel('seconds')
+    axes.set_ylabel('%')
     f.savefig(file)
 
 
@@ -95,8 +100,8 @@ class MonitorSysParams(object):
         cpus = [[float(line[columns.index(cpu_col)]) for line in lines] for cpu_col in cpu_cols]
         ram = [float(line[columns.index('%MEM')]) for line in lines]
 
-        plot_save(t, cpus, self.log_path + '/cpu.png',cpu_cols)
-        plot_save(t, ram, self.log_path + '/mem.png',cpu_cols)
+        plot_save(t, cpus, self.log_path + '/cpu.png','cpu-usage',cpu_cols)
+        plot_save(t, ram, self.log_path + '/mem.png','memory-usage',cpu_cols)
 
         if self.p_gpu:
             lines = [l.split(',') for l in read_lines(self.gpu_log_file)]
@@ -108,13 +113,13 @@ class MonitorSysParams(object):
             gpu_params = [[float(l[columns.index(p)].replace(' ','').replace('%','')) for l in lines]
                           for p in gpu_params_names]
             if len(gpu_params)>0:
-                plot_save(t,gpu_params,self.log_path+'/gpu_util.png',gpu_params_names)
+                plot_save(t,gpu_params, self.log_path+'/gpu_util.png','gpu-usage',gpu_params_names)
 
             gpu_params_names = [c for c in columns if 'MiB' in c]
             gpu_params = [[float(l[columns.index(p)].replace(' ','').replace('%','').replace('MiB','')) for l in lines]
                           for p in gpu_params_names]
             if len(gpu_params)>0:
-                plot_save(t,gpu_params,self.log_path+'/gpu_mem.png',gpu_params_names)
+                plot_save(t,gpu_params,self.log_path+'/gpu_mem.png','gpu-memory-usage',gpu_params_names)
 
     def parse_time(self, l):
         try:
@@ -181,7 +186,7 @@ def benchmark_numpy():
     # print("Eigendecomposition of a %dx%d matrix in %0.2f s." % (size / 2, size / 2, delta / N))
 
 if __name__ == '__main__':
-    with MonitorSysParams():
+    with MonitorSysParams('.'):
         sleep(1)
         benchmark_numpy()
         sleep(2)
