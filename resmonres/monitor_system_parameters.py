@@ -65,7 +65,7 @@ def plot_save(t,xx,file,title,sig_names=None):
 class MonitorSysParams(object):
     p = None
 
-    def __init__(self,log_path='/tmp'):
+    def __init__(self,log_path='.'):
         self.log_path = log_path
         self.log_file = log_path+'/cpu-mem-log.csv'
         self.gpu_log_file = log_path+'/gpu-log.csv'
